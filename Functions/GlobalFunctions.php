@@ -6,6 +6,7 @@ use Lightroom\Adapter\{
 };
 use Lightroom\Events\EventHelpers;
 use Lightroom\Common\Logbook;
+use Lightroom\Exceptions\LoggerClassNotFound;
 use Lightroom\Requests\Filter;
 use function Lightroom\Functions\GlobalVariables\{var_set, var_get};
 
@@ -82,10 +83,13 @@ function filter(...$arguments) {  return call_user_func_array([Filter::class, 'a
 
 /**
  * @method Logbook logger
- * 
+ *
  * create logger switch function
  * this function by default, would return the default logger
  * you can pass a logger name to make a quick switch.
+ * @param string $logger
+ * @return mixed|null
+ * @throws LoggerClassNotFound
  */
 function logger(string $logger = '')
 {
@@ -93,7 +97,7 @@ function logger(string $logger = '')
 }
 
 /**
- * @method File Handler
+ * @method File get_path
  * @param string $directory
  * @param string $file 
  * This function would help allow overriding of files from top to bottom
@@ -111,7 +115,7 @@ function get_path(string $directory, string $file) : string
         // load the array
         if (is_array(DIRECTORY_OVERRIDE)) :
 
-            // ilterate
+            // illiterate
             foreach (DIRECTORY_OVERRIDE as $constantName => $options) :
 
                 
@@ -149,7 +153,7 @@ function get_path(string $directory, string $file) : string
 }
 
 /**
- * @method FilePath Handler
+ * @method FilePath get_path_from_constant
  * @param string $path 
  * @return string
  */

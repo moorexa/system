@@ -5,6 +5,7 @@ namespace Lightroom\Core;
 use Lightroom\Core\Interfaces\ConstantInterface;
 
 /**
+ * @property null NONE
  * @package Global Constant Manager
  * @author Amadi ifeanyi <amadiify.com>
  */

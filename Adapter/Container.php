@@ -75,7 +75,7 @@ class Container
         if ($classPlaceholder != null) :
 
             // get class name
-            $className = self::getClassName($classPlaceholder);
+            $className = self::getReference($classPlaceholder);
 
             // get reflection
             $reflection = new \ReflectionClass($className);
@@ -165,7 +165,7 @@ class Container
             public function instance(...$arguments)
             {
                 // get class name
-                $className = self::getClassName($this->classPlaceholder);
+                $className = Container::getReference($this->classPlaceholder);
 
                 // return class instance
                 if (is_object($className)) return $className;
@@ -178,6 +178,24 @@ class Container
 
                 // return instance with arguments
                 return $reflection->newInstanceArgs($arguments);
+            }
+
+            /**
+             * @method Container invoke
+             * @param array $arguments
+             * @return mixed
+             * @noinspection PhpUndefinedMethodInspection
+             */
+            public function invoke(...$arguments)
+            {
+                // get function
+                $function = Container::getReference($this->classPlaceholder);
+
+                // do we have a function
+                if (!is_callable($function)) throw new \Exception('Not a function and cannot be invoked.');;
+
+                // call function with arguments
+                return call_user_func_array($function, $arguments);
             }
         };
     }
@@ -193,7 +211,7 @@ class Container
     public function get(string $classPlaceholder, string $property)
     {
         // get class name
-        $className = self::getClassName($classPlaceholder);
+        $className = self::getReference($classPlaceholder);
 
         // get reflection
         $reflection = new \ReflectionClass($className);
@@ -233,7 +251,7 @@ class Container
     public function set(string $classPlaceholder, string $property, $value) 
     {
         // get class name
-        $className = self::getClassName($classPlaceholder);
+        $className = self::getReference($classPlaceholder);
 
         // get reflection
         $reflection = new \ReflectionClass($className);
@@ -337,7 +355,7 @@ class Container
     public function call(string $classPlaceholder, string $method, ...$arguments)
     {
         // get class name
-        $className = self::getClassName($classPlaceholder);
+        $className = self::getReference($classPlaceholder);
 
         // load processor method
         if(is_string($className)) self::loadProcessorMethod('classCalled', $className);
@@ -406,25 +424,18 @@ class Container
     }
 
     /**
-     * @method Container getClassName
-     * @param string $classPlaceholder
+     * @method Container getReference
+     * @param string $reference
      * @return mixed
      * @throws Exception
-     * @throws ClassNotFound
      */
-    private static function getClassName(string $classPlaceholder)
+    public static function getReference(string $reference)
     {
         // check if registered, throw exception
-        if (!isset(self::$registry[$classPlaceholder])) throw new Exception('Container could not load class for '. $classPlaceholder.'. It just was not found.');
+        if (!isset(self::$registry[$reference])) throw new Exception('Container could not continue with '. $reference.'. It just was not found.');
 
-        // get class from placeholder
-        $className = self::$registry[$classPlaceholder];
-
-        // throw exception if class could not be found
-        if (is_string($className) && !class_exists($className)) throw new ClassNotFound($className);
-
-        // return class name
-        return $className;
+        // get reference from placeholder
+        return self::$registry[$reference];
     }
 
     /**

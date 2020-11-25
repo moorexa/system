@@ -314,7 +314,7 @@ class File
     public static function includeFile(string $fileName)
     {
         // check for '@' symbol
-        if (strpos($fileName, '@') == 0) :
+        if (strpos($fileName, '@') === 0) :
 
             // remove '@'
             $fileName = substr($fileName, 1);

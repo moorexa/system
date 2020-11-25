@@ -307,11 +307,12 @@ class File
     /**
      * @method File includeFile
      * @param string $fileName
+     * @param array $variablesArray
      * @throws FileNotFound
      * 
      * Would include a file from a path or from the self::$filesArray
      */
-    public static function includeFile(string $fileName)
+    public static function includeFile(string $fileName, array $variablesArray = [])
     {
         // check for '@' symbol
         if (strpos($fileName, '@') === 0) :
@@ -339,6 +340,9 @@ class File
 
                 // make var avaliable
                 extract($vars);
+
+                // make var availiable
+                extract($variablesArray);
                 
                 // include file 
                 include $filePath;
@@ -365,6 +369,9 @@ class File
             // check if file does not exists
             if (!file_exists($fileName)) throw new FileNotFound($fileName);
 
+            // make var availiable
+            extract($variablesArray);
+            
             // include file
             include $fileName;
 

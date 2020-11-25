@@ -181,12 +181,13 @@ function get_path_from_constant(string $path) : string
 /**
  * @method File includeFile
  * @param string $file
+ * @param array $variablesArray
  * @return mixed 
  * 
  * A self contained import function. Will require a file and return variables
  * availiable to scope.
  */
-function import(string $file)
+function import(string $file, array $variablesArray = [])
 {
-    return File::includeFile($file);
+    return File::includeFile($file, $variablesArray);
 }

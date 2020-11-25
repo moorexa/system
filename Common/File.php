@@ -2,6 +2,7 @@
 namespace Lightroom\Common;
 
 use Closure;
+use Lightroom\Exceptions\FileNotFound;
 
 /**
  * @package A Simple File handler
@@ -21,6 +22,11 @@ class File
      * @var File $instance
      */
     private static $instance;
+
+    /**
+     * @var array $filesArray
+     */
+    public static $filesArray = [];
     
     /**
      * @method File read
@@ -285,7 +291,7 @@ class File
      * A private method that returns an instance of the file class
      * @return File
      */
-    private static function getInstance() : File
+    public static function getInstance() : File
     {
         if (is_null(self::$instance)) :
 
@@ -296,5 +302,76 @@ class File
 
         // return class instance
         return self::$instance;
+    }
+
+    /**
+     * @method File includeFile
+     * @param string $fileName
+     * @throws FileNotFound
+     * 
+     * Would include a file from a path or from the self::$filesArray
+     */
+    public static function includeFile(string $fileName)
+    {
+        // check for '@' symbol
+        if (strpos($fileName, '@') == 0) :
+
+            // remove '@'
+            $fileName = substr($fileName, 1);
+
+            // check if file exists as a key
+            if (!isset(self::$filesArray[$fileName])) throw new FileNotFound('@' . $fileName);
+
+            // get array
+            $fileArray = self::$filesArray[$fileName];
+
+            // vars 
+            $vars = [];
+
+            // load array
+            if (is_array($fileArray)) : array_map(function($filePath) use (&$vars){
+
+                // load error if file doesn't exists
+                if (!file_exists($filePath)) throw new FileNotFound($filePath);
+
+                // create array
+                $vars = !is_array($vars) ? [] : $vars;
+
+                // make var avaliable
+                extract($vars);
+                
+                // include file 
+                include $filePath;
+
+                // defined vars
+                $definedVars = get_defined_vars();
+
+                // remove filepath
+                unset($definedVars['filePath']);
+
+                // remove  vars
+                unset($definedVars['vars']);
+
+                // add vars
+                $vars = array_merge($vars, $definedVars);
+
+            }, $fileArray); endif;
+
+            // return vars
+            return $vars;
+
+        else:
+
+            // check if file does not exists
+            if (!file_exists($fileName)) throw new FileNotFound($fileName);
+
+            // include file
+            include $fileName;
+
+            // get variables
+            return get_defined_vars();
+
+        endif;
+
     }
 }

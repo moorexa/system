@@ -4,6 +4,7 @@ use Lightroom\Adapter\{
     GlobalFunctions, Configuration\Environment, 
     ProgramFaults, Container, ClassManager
 };
+use Lightroom\Common\File;
 use Lightroom\Events\EventHelpers;
 use Lightroom\Common\Logbook;
 use Lightroom\Exceptions\LoggerClassNotFound;
@@ -175,4 +176,17 @@ function get_path_from_constant(string $path) : string
 
     // return path
     return $path;
+}
+
+/**
+ * @method File includeFile
+ * @param string $file
+ * @return mixed 
+ * 
+ * A self contained import function. Will require a file and return variables
+ * availiable to scope.
+ */
+function import(string $file)
+{
+    return File::includeFile($file);
 }

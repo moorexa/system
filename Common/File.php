@@ -330,7 +330,7 @@ class File
             $vars = [];
 
             // load array
-            if (is_array($fileArray)) : array_map(function($filePath) use (&$vars){
+            if (is_array($fileArray)) : array_map(function($filePath) use (&$vars, &$variablesArray){
 
                 // load error if file doesn't exists
                 if (!file_exists($filePath)) throw new FileNotFound($filePath);
@@ -353,8 +353,11 @@ class File
                 // remove filepath
                 unset($definedVars['filePath']);
 
-                // remove  vars
+                // remove vars
                 unset($definedVars['vars']);
+
+                // remove variableArray
+                unset($definedVars['variablesArray']);
 
                 // add vars
                 $vars = array_merge($vars, $definedVars);

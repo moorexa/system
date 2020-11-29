@@ -104,7 +104,7 @@ class TemplateHandler implements TemplateHandlerInterface
      * @param string $aliase
      * @return string
      */
-    public function aliase(string $aliase) : string 
+    public function aliase(string $aliase) : string
     {
         return $aliase;
     }
@@ -113,7 +113,7 @@ class TemplateHandler implements TemplateHandlerInterface
      * @method TemplateHandler default
      * @return void
      */
-    public function default() : void 
+    public function default() : void
     {
         // @var array $defaultHandler
         self::$defaultHandler = self::$templateHandlers[$this->aliase];
@@ -147,7 +147,7 @@ class TemplateHandler implements TemplateHandlerInterface
 
             // maybe xml or json string
             if (self::$renderCalled === false) self::formatDataAndRender($path);
-            
+
         endif;
     }
 
@@ -169,6 +169,8 @@ class TemplateHandler implements TemplateHandlerInterface
             return call_user_func_array([$engine, 'externalCall'], ['redirect', $path, $arguments]);
 
         endif;
+
+        return 0;
     }
 
     /**
@@ -208,16 +210,16 @@ class TemplateHandler implements TemplateHandlerInterface
 
     /**
      * @method TemplateHandler getTemplateHandler
-     * @param string $alaise
+     * @param string $alise
      * @return TemplateEngineInterface
      */
-    public static function getTemplateHandler(string $alaise) : TemplateEngineInterface 
+    public static function getTemplateHandler(string $alise) : TemplateEngineInterface
     {
         // @var TemplateEngineInterface $handler
         $handler = null;
 
         // load handler
-        if (isset(self::$templateHandlers[$alaise])) $handler = self::$templateHandlers[$alaise]['instance'];
+        if (isset(self::$templateHandlers[$alise])) $handler = self::$templateHandlers[$alise]['instance'];
 
         // return handler
         return $handler;
@@ -225,23 +227,25 @@ class TemplateHandler implements TemplateHandlerInterface
 
     /**
      * @method TemplateHandler reRender
-     * @return bool
-     * 
+     * @param null $path
+     * @param array $arguments
+     * @return void
+     *
      * This method would allow the render method to be executed again
      */
     public static function reRender($path = null, ...$arguments)
     {
-        // start pathing
+        // start path
         if ($path !== null) :
 
-        // start buffer 
-        ob_start();
+            // start buffer
+            ob_start();
 
-        // render view
-        call_user_func_array([$this, 'render'], array_merge([$path], $arguments));
+            // render view
+            call_user_func_array([new self, 'render'], array_merge([$path], $arguments));
 
-        // clear buffer
-        ob_clean();
+            // clear buffer
+            ob_clean();
 
         endif;
 
@@ -254,7 +258,7 @@ class TemplateHandler implements TemplateHandlerInterface
      * @param mixed $data
      * @return void
      */
-    private static function formatDataAndRender($data) : void 
+    private static function formatDataAndRender($data) : void
     {
         // @var string $output
         $output = '';
@@ -292,7 +296,7 @@ class TemplateHandler implements TemplateHandlerInterface
 
             endif;
 
-        elseif (is_array($data)) :
+        elseif (is_array($data) || is_object($data)) :
 
             // get content type
             $usingJson = false;

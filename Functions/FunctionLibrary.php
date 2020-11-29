@@ -6,6 +6,7 @@ use Lightroom\Core\{
 use Lightroom\Adapter\{
     GlobalFunctions, ClassManager
 };
+use Lightroom\Router\Guards\RouteGuard;
 use function Lightroom\Functions\GlobalVariables\var_set;
 
 /**
@@ -349,4 +350,23 @@ $function->create('trueOnly', function(array $list) : bool
     // return bool
     return $default;
     
+})->attachTo(GlobalFunctions::class);
+
+
+/**
+ * @method redirect
+ * @param string $path
+ * @param array $arguments
+ * @return void
+ * 
+ * This function would help you perform http redirection
+ */
+$function->create('redirect', function(string $path, array $arguments = []) : void
+{
+    // create class
+    $routeClass = new class(){ use RouteGuard; };
+
+    // make redirection
+    $routeClass->redirect($path, $arguments);
+
 })->attachTo(GlobalFunctions::class);

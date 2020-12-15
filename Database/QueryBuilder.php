@@ -86,12 +86,12 @@ trait QueryBuilder
 
             // allow html in sql statement, default is false
             case 'allowHTML':
-                $this->allowHTMLTags = true;
+                $this->allowHTMLTags = isset($arguments[0]) ? $arguments[0] : true;
             break;
 
             // allow slashes in sql statement, default is false
             case 'allowSlashes':
-                $this->allowSlashes = true;
+                $this->allowSlashes = isset($arguments[0]) ? $arguments[0] : true;
             break;
 
             // add binds

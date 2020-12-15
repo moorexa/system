@@ -282,7 +282,7 @@ trait QueryBuilderMagicMethods
                                 if (!$this->allowHTMLTags) $value = strip_tags($value);
 
                                 // if slashes is allowed then add slashes
-                                if ($this->allowSlashes) $value = addslashes($value);
+                                if (!$this->allowSlashes) $value = addslashes($value);
 
                                 // update bind
                                 $bind[$key] = $value;

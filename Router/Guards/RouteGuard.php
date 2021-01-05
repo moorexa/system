@@ -3,6 +3,7 @@ namespace Lightroom\Router\Guards;
 
 use Lightroom\Router\Interfaces\RouteGuardInterface;
 use function Lightroom\Requests\Functions\{session};
+use function Lightroom\Functions\GlobalVariables\{var_get};
 
 /**
  * @package Route Guard
@@ -231,21 +232,31 @@ trait RouteGuard
                 public function __construct()
                 {
                     // get current request
-                    $currentRequest = ltrim($_SERVER['REQUEST_URI'], '/');
-
                     if (session()->has('redirect.data')) :
 
                         // @var array $data
                         $data = session()->get('redirect.data');
 
+                        // get view
+                        $view = var_get('url')->view;
+
+                        // get params
+                        $params = implode('/', var_get('url')->params);
+
+                        // load data
+                        $redirectData = isset($data[$view]) ? $data[$view] : (isset($data[$params]) ? $data[$params] : null);
+
                         // check for exported data for current request
-                        if (isset($data[$currentRequest])) :
+                        if ($redirectData !== null) :
 
                             // set
-                            $this->exported = $data[$currentRequest];
+                            $this->exported = $redirectData;
 
                             // clean up
-                            unset($data[$currentRequest]);
+                            if (isset($data[$view])) unset($data[$view]);
+
+                            // check params
+                            if (isset($data[$params])) unset($data[$params]);
 
                             // set session again
                             session()->set('redirect.data', $data);

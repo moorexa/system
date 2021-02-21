@@ -140,15 +140,16 @@ trait RouteGuard
 
     /**
      * @method RouteGuard redirect
-     * @param string $path (optional)
+     * @param string $path
      * @param array $arguments
+     * @param string $redirectDataName
      * @return mixed
      */
-    public function redirect(string $path = '', array $arguments = []) 
+    public function redirect(string $path = '', array $arguments = [], string $redirectDataName = '') 
     {
-        // get redirect url
-        if ($path != '') :
+        if (is_string($path) && $path != '') :
 
+            // set the response code
             http_response_code(301);
             
             // not external link
@@ -177,6 +178,13 @@ trait RouteGuard
                 // get current request
                 $currentRequest = ltrim($_SERVER['REQUEST_URI'], '/');
 
+                // trigger redirection 
+                if (event()->canEmit('ev.redirection')) event()->emit('ev', 'redirection', [
+                    'path'  => &$path,
+                    'query' => &$query,
+                    'data'  => &$data
+                ]);
+
                 // add query to path
                 $pathWithQuery = $path . $query;
 
@@ -200,6 +208,9 @@ trait RouteGuard
 
                     endif;
 
+                    // start buffer
+                    ob_start();
+
                     // perform redirection
                     header('location: '. func()->url($pathWithQuery), true, 301); exit;
 
@@ -207,11 +218,46 @@ trait RouteGuard
 
             else:
 
-                // build query
-                $query = http_build_query($arguments);
+                // @var string $query
+                $query = '';
 
-                // check length
-                $query = strlen($query) > 1 ? '?' . $query : $query;
+                if ($redirectDataName === '') :
+
+                    // build query
+                    $query = http_build_query($arguments);
+
+                    // check length
+                    $query = strlen($query) > 1 ? '?' . $query : $query;
+
+                else:
+
+                    if (count($arguments) > 0) :
+
+                        // get redirect data
+                        $redirectData = session()->get('redirect.data');
+
+                        // create array if not found
+                        if (!is_array($redirectData)) $redirectData = [];
+
+                        // lets add path
+                        $redirectData[$redirectDataName] = $arguments;
+
+                        // set redirect data
+                        session()->set('redirect.data', $redirectData);
+
+                    endif;
+
+                endif;
+
+                // trigger redirection 
+                if (event()->canEmit('ev.redirection')) event()->emit('ev', 'redirection', [
+                    'path'  => &$path,
+                    'query' => &$query,
+                    'data'  => &$data
+                ]);
+
+                // start buffer
+                ob_start();
 
                 // redirect to external link
                 header('location: ' . $path . $query, true, 301); exit;
@@ -221,7 +267,7 @@ trait RouteGuard
         else:   
 
             // return object
-            return new class()
+            return new class($redirectDataName)
             {
                 /**
                  * @var array $exported
@@ -229,7 +275,7 @@ trait RouteGuard
                 private $exported = [];
 
                 // load exported data
-                public function __construct()
+                public function __construct(string $redirectDataName = '')
                 {
                     // get current request
                     if (session()->has('redirect.data')) :
@@ -238,7 +284,7 @@ trait RouteGuard
                         $data = session()->get('redirect.data');
 
                         // get view
-                        $view = var_get('url')->view;
+                        $view = $redirectDataName != '' ? $redirectDataName : var_get('url')->view;
 
                         // get params
                         $params = implode('/', var_get('url')->params);

@@ -22,10 +22,11 @@ function render($path, ...$arguments) : void
  * @method TemplateHandlerInterface redirect
  * @param string $path
  * @param array $arguments
+ * @param string $redirectDataName
  * @return mixed
  */
-function redirect(string $path = '', array $arguments = [])  
+function redirect(string $path = '', array $arguments = [], string $redirectDataName = '')  
 {
     // call render method
-    return call_user_func_array([TemplateHandler::class, 'redirect'], [$path, $arguments]);
+    return call_user_func_array([TemplateHandler::class, 'redirect'], [$path, $arguments, $redirectDataName]);
 }

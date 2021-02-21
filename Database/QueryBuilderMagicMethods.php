@@ -355,6 +355,20 @@ trait QueryBuilderMagicMethods
             // get first argument
             $firstArgument = $arguments[0];
 
+            // group query
+            $groupQuery = false;
+
+            // do we have a callback function
+            if (is_callable($firstArgument)) :
+
+                // we can group
+                $groupQuery = true;
+
+                // get string
+                $firstArgument = $firstArgument();
+
+            endif;
+
             // continue with this block if first argument is an array, object or json data
             if (is_array($firstArgument) || is_object($firstArgument) || (is_string($firstArgument) && $firstArgument[0] == '{')) :
             
@@ -374,6 +388,9 @@ trait QueryBuilderMagicMethods
                     $whereBind = $this->__arrayBind($firstArgument, $separator);
                     $where = $whereBind['set'];
                     $bind = $whereBind['bind'];
+
+                    // can we group 
+                    if ($groupQuery) $where = '(' . $where . ')';
 
                     $this->buildQueryAndLastWhere($statement, $where);
 
@@ -422,6 +439,9 @@ trait QueryBuilderMagicMethods
                         $bind = $stringBind['bind'];
 
                     endif;
+
+                    // can we group 
+                    if ($groupQuery) $where = '(' . $where . ')';
                     
                     // bind query
                     $this->buildQueryAndLastWhere($statement, $where);

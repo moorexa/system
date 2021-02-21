@@ -155,10 +155,11 @@ class TemplateHandler implements TemplateHandlerInterface
      * @method TemplateHandlerInterface redirect
      * @param string $path
      * @param mixed $arguments
+     * @param string $redirectDataName
      * @return mixed
      * @throws Exception
      */
-    public static function redirect(string $path = '', array $arguments = [])
+    public static function redirect(string $path = '', array $arguments = [], string $redirectDataName = '')
     {
         if (self::$renderCalled === false) :
 
@@ -166,7 +167,7 @@ class TemplateHandler implements TemplateHandlerInterface
             $engine = self::getTemplateEngine($path);
 
             // load external call
-            return call_user_func_array([$engine, 'externalCall'], ['redirect', $path, $arguments]);
+            return call_user_func_array([$engine, 'externalCall'], ['redirect', $path, $arguments, $redirectDataName]);
 
         endif;
 

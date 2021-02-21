@@ -336,6 +336,9 @@ trait QueryBuilderExecute
 
                             endif;
 
+                            // clean key
+                            $key = str_replace('`', '', $key);
+
                             // get value from closure
                             if (!is_null($val) && !is_string($val) && is_callable($val))  $val = call_user_func($val);
 

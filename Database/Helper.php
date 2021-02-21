@@ -324,6 +324,10 @@ trait Helper
 
                 // return string
                 return $statement;
+            },
+            'concat'  => function($value)
+            {
+                $this->query .= $value . ' ';
             }
             
         ];

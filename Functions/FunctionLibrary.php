@@ -370,3 +370,220 @@ $function->create('redirect', function(string $path, array $arguments = []) : vo
     $routeClass->redirect($path, $arguments);
 
 })->attachTo(GlobalFunctions::class);
+
+/**
+ * @method urlpath
+ * @param string $append
+ * @return string
+ * 
+ * This function would return the current url path
+ */
+$function->create('urlpath', function(string $append = '') : string
+{
+    // load ref
+    $ref = func()->url();
+
+    // check for query
+    if (isset($_SERVER['QUERY_STRING'])) :
+
+        // get query string from server
+        parse_str($_SERVER['QUERY_STRING'], $query);
+
+        // can we remove
+        if (isset($query['rm_tmp_q'])) unset($query['rm_tmp_q']);
+
+        // get url target
+        $urlTarget = func()->finder('beautiful_url_target');
+
+        // check in query
+        if ($urlTarget !== null && isset($query[$urlTarget])) :
+
+            // add url target
+            $ref .= $query[$urlTarget];
+
+            // remove url target
+            unset($query[$urlTarget]);
+
+            // can we add a question mark ?
+            if (count($query) > 0) $ref .= '?' . http_build_query($query);
+
+        endif;
+
+    endif;
+
+    // return string
+    return $ref . $append;
+
+})->attachTo(GlobalFunctions::class);
+
+
+/**
+ * @method add_query
+ * @param string $path 
+ * @param array $query
+ * @return string
+ * 
+ * This function would add query to the path passed and would return a new string
+ */
+$function->create('add_query', function(string $path, array $query) : string
+{
+    // check ? in path
+    if (strpos($path, '?') === false) :
+
+        // add '?'
+        $path .= '?' . http_build_query($query);
+
+    else:
+
+        // add '&'
+        $path .= '&' . http_build_query($query);
+
+    endif;
+
+    // return string
+    return $path;
+
+})->attachTo(GlobalFunctions::class);
+
+/**
+ * @method add_tmp_query
+ * @param string $path 
+ * @param array $query
+ * @return string
+ * 
+ * This function would wrap a query with a temporary name and would return a new string
+ */
+$function->create('add_tmp_query', function(string $path, array $query) : string
+{
+    // check ? in path
+    if (strpos($path, '?') === false) :
+
+        // add '?'
+        $path .= '?rm_tmp_q=' . base64_encode(serialize($query));
+
+    else:
+
+        // add '&'
+        $path .= '&rm_tmp_q=' . base64_encode(serialize($query));
+
+    endif;
+
+    // return string
+    return $path;
+
+})->attachTo(GlobalFunctions::class);
+
+/**
+ * @method get_tmp_query
+ * @return array
+ * 
+ * This function would access the query temporary name and would return an array
+ */
+$function->create('get_tmp_query', function() : array
+{
+    // @var array $query
+    $query = [];
+
+    // check $_GET
+    if (isset($_GET['rm_tmp_q'])) :
+
+        // decode url
+        $query = base64_decode($_GET['rm_tmp_q']);
+
+        // check if we have something
+        if ($query !== null) $query = unserialize($query);
+
+        // remove tmp query
+        unset($_GET['rm_tmp_q']);
+
+        // is query an array
+        if (!is_array($query)) $query = [];
+
+    endif;
+
+    // return array
+    return $query;
+
+})->attachTo(GlobalFunctions::class);
+
+/**
+ * @method add_to_query
+ * @param string $key 
+ * @param mixed $value
+ * @return string
+ * 
+ * This function would add a parameter to the current url address
+ */
+$function->create('add_to_query', function(string $key, $value) : string
+{
+    // @var string $query
+    $query = func()->urlpath();
+
+    // read url
+    $queryArray = parse_url($query);
+
+    // build url
+    $url = $queryArray['scheme'] . '://' . $queryArray['host'] . ( (isset($queryArray['port']) && $queryArray['port'] != '') ? ':' . $queryArray['port'] : '') . $queryArray['path'];
+
+    // read query
+    if (isset($queryArray['query']) && strlen($queryArray['query']) > 1) :
+
+        // parse
+        parse_str($queryArray['query'], $queryData);
+
+        // add key and value
+        $queryData[$key] = $value;
+
+        // append to url
+        $url .= '?' . http_build_query($queryData);
+
+        // update query
+        $query = $url;
+    
+    endif;
+
+    // return string
+    return $query;
+
+})->attachTo(GlobalFunctions::class);
+
+/**
+ * @method remove_from_query
+ * @param string $key
+ * @param string $address
+ * @return string
+ * 
+ * This function would remove a parameter from the current url address
+ */
+$function->create('remove_from_query', function(string $key, string $address = '') : string
+{
+    // @var string $query
+    $query = $address == '' ? func()->urlpath() : $address;
+
+    // read url
+    $queryArray = parse_url($query);
+
+    // build url
+    $url = $queryArray['scheme'] . '://' . $queryArray['host'] . ( (isset($queryArray['port']) && $queryArray['port'] != '') ? ':' . $queryArray['port'] : '') . $queryArray['path'];
+
+    // read query
+    if (isset($queryArray['query']) && strlen($queryArray['query']) > 1) :
+
+        // parse
+        parse_str($queryArray['query'], $queryData);
+
+        // remove key
+        if (isset($queryData[$key])) unset($queryData[$key]);
+
+        // append to url
+        $url .= (count($queryData) > 0) ? '?' . http_build_query($queryData) : '';
+
+        // update query
+        $query = $url;
+    
+    endif;
+
+    // return string
+    return $query;
+
+})->attachTo(GlobalFunctions::class);

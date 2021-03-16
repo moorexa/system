@@ -64,9 +64,12 @@ trait DriversHelper
 
         // secret key
         if (is_string($identifier)) :
+
+            // get the user domain
+            $domain = $this->getUserDomain(func()->url('/session/storage'));
         
             // update key
-            $key = substr(hash('sha256', '/'.$type.'/' . $identifier . '/key/' . env('bootstrap', 'secret_key')), 0, 10) . '_' . $identifier;
+            $key = md5(hash('sha256', '/'.$type.'/' . $identifier . '/key/' . env('bootstrap', 'secret_key')) . $domain) . '_' . $identifier;
 
         endif;
 

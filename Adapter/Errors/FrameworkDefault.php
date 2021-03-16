@@ -15,7 +15,9 @@ class FrameworkDefault extends Exception
      */
     public function __construct($exception)
     {
-        
+        // @var string $content
+        $content = ob_get_contents();
+
         // clean output
         (strlen(ob_get_contents()) > 0) ? ob_clean() : null;
         
@@ -62,6 +64,17 @@ class FrameworkDefault extends Exception
 
             // log error    
             if ($logger !== null) $logger->error($exception->getMessage(), ['file' => $exception->getFile(), 'Line' => $exception->getLine()]);
+
+            // inform 
+            echo '<pre style="background:#f20; color:#fff; display:flex; align-items:center; flex-wrap:wrap; min-height:60px; padding-left:10px; overflow:scroll; position:fixed; bottom:0px; z-index:999; width:100%;">
+            <code>You have a new error logged in your error logger. Please check to stop seeing this message.</code>
+            </pre>';
+
+            // print
+            print $content;
+
+            // kill
+            exit();
 
         endif;
     }

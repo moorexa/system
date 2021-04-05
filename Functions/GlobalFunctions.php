@@ -170,7 +170,7 @@ function get_path_from_constant(string $path) : string
         $path = str_replace($constant[0], '', $path);
 
         // get real path
-        $path = get_path(constant($constantName), $path);
+        $path = defined($constantName) ? get_path(constant($constantName), $path) : $path;
 
     endif;
 

@@ -1,12 +1,13 @@
 <?php
 
 use Lightroom\Adapter\{
-    GlobalFunctions, Configuration\Environment, 
+    GlobalFunctions, Configuration\Environment,
     ProgramFaults, Container, ClassManager
 };
 use Lightroom\Common\File;
 use Lightroom\Events\EventHelpers;
 use Lightroom\Common\Logbook;
+use Lightroom\Exceptions\FileNotFound;
 use Lightroom\Exceptions\LoggerClassNotFound;
 use Lightroom\Requests\Filter;
 use function Lightroom\Functions\GlobalVariables\{var_set, var_get};
@@ -55,7 +56,7 @@ function event(string $name = '', $callback = null)
     endif;
 
     // return event class
-    return $eventClass; 
+    return $eventClass;
 }
 
 // set global variable
@@ -73,7 +74,7 @@ function gvar(string $variableName, $variableValue = null)
         // return value
         return $value;
 
-    endif;  
+    endif;
 
     // set variable 
     var_set($variableName, $variableValue);
@@ -100,9 +101,9 @@ function logger(string $logger = '')
 /**
  * @method File get_path
  * @param string $directory
- * @param string $file 
+ * @param string $file
  * This function would help allow overriding of files from top to bottom
- * 
+ *
  * @return string
  */
 function get_path(string $directory, string $file) : string
@@ -119,7 +120,7 @@ function get_path(string $directory, string $file) : string
             // illiterate
             foreach (DIRECTORY_OVERRIDE as $constantName => $options) :
 
-                
+
                 // get the constant name
                 if (constant($constantName) === $directory) :
 
@@ -155,10 +156,10 @@ function get_path(string $directory, string $file) : string
 
 /**
  * @method FilePath get_path_from_constant
- * @param string $path 
+ * @param string $path
  * @return string
  */
-function get_path_from_constant(string $path) : string 
+function get_path_from_constant(string $path) : string
 {
     // check if path has %% var
     if (preg_match('/[%](\S+?)[%]/', $path, $constant)) :
@@ -182,12 +183,26 @@ function get_path_from_constant(string $path) : string
  * @method File includeFile
  * @param string $file
  * @param array $variablesArray
- * @return mixed 
- * 
+ * @return mixed
+ *
  * A self contained import function. Will require a file and return variables
- * availiable to scope.
+ * available to scope.
+ * @throws FileNotFound
  */
 function import(string $file, array $variablesArray = [])
 {
     return File::includeFile($file, $variablesArray);
+}
+
+/**
+ * @method URL getUrlAsArray
+ * @return array
+ */
+function getUrlAsArray() : array
+{
+    // @var array $url
+    $url = var_get('incoming-url');
+
+    // return array
+    return is_array($url) ? $url : [];
 }

@@ -391,7 +391,7 @@ class ClassManager
                     $ref = new \ReflectionParameter([$object, $method], $index);
 
                     // Get class
-                    $class = $ref->getClass();
+                    $class = $parameter->getType() && !$parameter->getType()->isBuiltin() ? new ReflectionClass($parameter->getType()->getName()) : null;
 
                     if ($class !== null) :
                     

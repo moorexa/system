@@ -32,7 +32,7 @@ trait ThrowableExceptionManager
      * @return void
      * @throws ReflectionException
      */
-    final private function callRegisteredThrowable(&$exception)
+    private function callRegisteredThrowable(&$exception)
     {
         // get throwable
         $throwable = Throwable::getThrowableEvents();

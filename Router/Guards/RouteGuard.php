@@ -149,6 +149,20 @@ trait RouteGuard
     {
         if (is_string($path) && $path != '') :
 
+            // @var bool $sameOrigin
+            $sameOrigin = false;
+
+            // check for same origin
+            if (strpos($path, '@') === 0) :
+
+                // update same origin
+                $sameOrigin = true;
+
+                // update path
+                $path = substr($path, 1);
+
+            endif;
+
             // set the response code
             http_response_code(301);
             
@@ -189,7 +203,7 @@ trait RouteGuard
                 $pathWithQuery = $path . $query;
 
                 // redirect if pathWithQuery is not equivalent to the current request
-                if ($pathWithQuery != $currentRequest) :
+                if (($pathWithQuery != $currentRequest) || ($pathWithQuery == $currentRequest && $sameOrigin)) :
 
                     // export data
                     if (count($data) > 0) :

@@ -424,6 +424,7 @@ class Filter
 
                 case 'POST':
                 case 'GET':
+                case 'PUT':
                 case 'HEADER':
                     // load channel
                     self::loadChannel($channel, $filterData, $promise);
@@ -460,6 +461,7 @@ class Filter
 
                     case 'POST':
                     case 'GET':
+                    case 'PUT':
                     case 'HEADER':
                         // load channel
                         self::loadChannel($filterData, $filterData, $promise);
@@ -490,8 +492,9 @@ class Filter
         // load channel
         switch (strtoupper($channel)) :
 
-            // POST
+            // POST, PUT
             case 'POST':
+            case 'PUT':
 
                 // update channel
                 $channelUsed = post();

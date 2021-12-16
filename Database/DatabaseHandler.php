@@ -24,6 +24,12 @@ class DatabaseHandler
     public static $activeHandler;
 
     /**
+     * @var int $lastInsertId
+     * Store the last inserted id
+     */
+    public static $lastInsertId = 0;
+
+    /**
      * @var DatabaseHandlerInterface $activeHandlerInstance
      * This is the actual class instance
      */
@@ -465,5 +471,14 @@ class DatabaseHandler
             
 
         endif;
+    }
+
+    /**
+     * @method DatabaseHandler getLastInsertedId
+     * @return int
+     */
+    public static function getLastInsertedId() : int
+    {
+        return self::$lastInsertId;
     }
 }

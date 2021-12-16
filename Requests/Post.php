@@ -1,8 +1,9 @@
 <?php
 namespace Lightroom\Requests;
 
-use function Lightroom\Requests\Functions\server;
+use function Lightroom\Requests\Functions\{server};
 use Lightroom\Requests\Interfaces\PostRequestInterface;
+use function Lightroom\Security\Functions\{encrypt, decrypt};
 /**
  * @package Post
  * @author Amadi Ifeanyi <amadiify.com>
@@ -10,6 +11,8 @@ use Lightroom\Requests\Interfaces\PostRequestInterface;
  */
 trait Post
 {
+    public $CLEAR_SUBMISSION_DATA = 'clear_submission_data';
+
     /**
      * @method PostRequestInterface has
      * @param string $key
@@ -262,7 +265,6 @@ trait Post
         // return array
         return $post;
     }
-    
 
     /**
      * @method PostRequestInterface getToken
@@ -446,5 +448,51 @@ trait Post
 
         // return boolean
         return true;
+    }
+
+    /**
+     * @method PostRequestInterface clearResubmission
+     * @param string $redirectTo
+     * @return void
+     * 
+     * Prevents form resubmission prompt
+     */
+    public function clearResubmission(string $redirectTo = '') : void 
+    {
+        // check the content type and post size
+        if (count($_POST) > 0 && $_SERVER['CONTENT_TYPE'] == 'application/x-www-form-urlencoded') :
+
+            // set the data 
+            $_SESSION[$this->CLEAR_SUBMISSION_DATA] = encrypt(serialize($this->all()));
+
+            // get the request uri
+            $requestUri = $redirectTo != '' ? $redirectTo : isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+
+            // redirect now
+            func()->redirect(func()->url(ltrim($requestUri, '/')));
+
+        else:
+
+            // redirect happened
+            if (isset($_SESSION[$this->CLEAR_SUBMISSION_DATA])) :
+
+                // set post
+                $_POST = array_merge(unserialize(decrypt($_SESSION[$this->CLEAR_SUBMISSION_DATA])), $_POST);
+
+            endif;
+
+        endif;
+    }
+
+    /**
+     * @method PostRequestInterface clearSubmittedData
+     * @return void
+     * 
+     * Clears submitted data cached
+     */
+    public function clearSubmittedData() : void 
+    {
+        // redirect happened, clear session
+        if (isset($_SESSION[$this->CLEAR_SUBMISSION_DATA])) unset($_SESSION[$this->CLEAR_SUBMISSION_DATA]);
     }
 }

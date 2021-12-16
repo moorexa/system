@@ -200,6 +200,9 @@ trait QueryBuilderExecute
         
                             endswitch;
 
+                            // log last insert id
+                            if ($this->method == 'insert') Handler::$lastInsertId = $this->pdoInstance->lastInsertId();
+
                             // query ran
                             Handler::queryRanSuccessfully($statement, $this->method);
 

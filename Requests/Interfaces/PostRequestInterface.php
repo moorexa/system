@@ -139,4 +139,20 @@ interface PostRequestInterface
      * Clears the $_POST array
      */
     public function clear() : bool;
+
+    /**
+     * @method PostRequestInterface clearResubmission
+     * @return void
+     * 
+     * Prevents form resubmission prompt
+     */
+    public function clearResubmission() : void;
+
+    /**
+     * @method PostRequestInterface clearSubmittedData
+     * @return void
+     * 
+     * Clears submitted data cached
+     */
+    public function clearSubmittedData() : void;
 }

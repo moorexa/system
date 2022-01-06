@@ -10,6 +10,7 @@ use ReflectionException;
 use Lightroom\Templates\Interfaces\{
     TemplateHandlerInterface, TemplateEngineInterface
 };
+use function Lightroom\Requests\Functions\{headers};
 /**
  * @package Template Handler
  * @author Amadi Ifeanyi <amadiify.com>
@@ -34,7 +35,7 @@ class TemplateHandler implements TemplateHandlerInterface
     /**
      * @var bool $renderCalled
      */
-    private static $renderCalled = false;
+    public static $renderCalled = false;
 
     /**
      * @method TemplateHandler
@@ -271,7 +272,7 @@ class TemplateHandler implements TemplateHandlerInterface
             if (preg_match('/[<][\/](.*?)[>]/', $data)) :
 
                 // change the content type
-                header('Content-Type: application/xml');
+                headers()->set('Content-Type', 'application/xml');
 
                 // check for xml starting tag
                 if (strpos($data, '<?xml') !== false) :
@@ -290,7 +291,7 @@ class TemplateHandler implements TemplateHandlerInterface
             else:
 
                 // change the content type
-                header('Content-Type: application/json');
+                headers()->set('Content-Type', 'application/json');
 
                 // print json data
                 $output = $data;
@@ -344,7 +345,7 @@ class TemplateHandler implements TemplateHandlerInterface
             if ($usingXml === false && $usingJson === false) :
 
                 // change the content type
-                header('Content-Type: application/json');
+                headers()->set('Content-Type', 'application/json');
 
                 // print json data
                 $output = json_encode($data, JSON_PRETTY_PRINT);
@@ -353,13 +354,19 @@ class TemplateHandler implements TemplateHandlerInterface
 
         endif;
 
+        // cache output
+        $_ENV['RENDER_CONTENT_OUTPUT_CACHE'] = $output;
+
         // check for output
         if ($output !== '') :
 
             self::$renderCalled = true;
 
+            // can echo
+            $canEcho = isset($_ENV['CACHE_RENDER_OUTPUT']) && $_ENV['CACHE_RENDER_OUTPUT'] == true ? false : true;
+
             // render output
-            echo $output;
+            if ($canEcho) echo $output;
 
         endif;
     }

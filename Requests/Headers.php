@@ -13,6 +13,11 @@ use function Lightroom\Requests\Functions\{server};
 trait Headers
 {
     /**
+     * @var array $headers
+     */
+    private $headers = [];
+
+    /**
      * @method HeadersInterface has header
      * @param string $header
      * @return bool
@@ -69,8 +74,14 @@ trait Headers
      */
     public function set(string $header, string $value) : void
     {
+        // cache headers
+        $this->headers[$header] = $value;
+
+        // use header function
+        $useHeaderFunction = (isset($_ENV['USE_HEADER_FUNCTION'])) ? $_ENV['USE_HEADER_FUNCTION'] : true;
+
         // set header
-        header($header . ': '. $value);
+        if ($useHeaderFunction) header($header . ': '. $value);
     }
 
     /**
@@ -188,7 +199,7 @@ trait Headers
             $headers['header_list'] = headers_list();
         }
 
-        return $headers;
+        return array_merge($headers, $this->headers);
     }
 
     /**

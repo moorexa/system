@@ -265,6 +265,9 @@ trait Helper
             },
             'like'      => function($arguments) use ($sql){
 
+                // arguments not an array
+                if (!is_array($arguments)) $arguments = func_get_args();
+                
                 // create reference
                 $argumentsCopy =& $arguments;
                 // copy sql statement 

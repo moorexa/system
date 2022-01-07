@@ -193,8 +193,7 @@ class Driver implements DriverInterface, DriverQueryBuilder
     public function getQueryBuilder() : QueryBuilderInterface
     {
         // return query builder
-        return ClassManager::singleton(Builder::class,
-        [
+        return new Builder([
             'pdoInstance'   => $this->getActiveConnection(),
             'driverClass'   => $this->getActiveDriver(),
             'driver'        => 'sqlite',

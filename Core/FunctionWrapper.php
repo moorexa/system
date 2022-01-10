@@ -235,14 +235,16 @@ class FunctionWrapper implements FunctionWrapperInterface
                 $reflectionParameter = new \ReflectionParameter($closure, $index);
 
                 // get reflection class
-                $class = $reflectionParameter->getClass();
+                $class = $reflectionParameter->getType();
 
-                if ($class !== null) :
+                if (is_a($class, \ReflectionNamedType::class)) :
+
+					$name = $class->getName();
                 
-                    if ($class->isInstantiable()) :
+                    if (class_exists($name)) :
                     
                         // create instance and update parameters
-                        $newParameters[$index][] = new $class->name;
+                        $newParameters[$index][] = new $name;
 
                     endif;
                 

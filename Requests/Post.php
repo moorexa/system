@@ -466,7 +466,7 @@ trait Post
             $_SESSION[$this->CLEAR_SUBMISSION_DATA] = encrypt(serialize($this->all()));
 
             // get the request uri
-            $requestUri = $redirectTo != '' ? $redirectTo : isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '';
+            $requestUri = ($redirectTo != '' ? $redirectTo : (isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : ''));
 
             // redirect now
             func()->redirect(func()->url(ltrim($requestUri, '/')));

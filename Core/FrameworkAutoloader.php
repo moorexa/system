@@ -243,6 +243,7 @@ class FrameworkAutoloader
         // autoload passed
         $autoload = false;
 
+
         if (count(self::$registeredPrivateAutoloader) > 0) :
 
             // run a foreach loop and break out if $class returns true

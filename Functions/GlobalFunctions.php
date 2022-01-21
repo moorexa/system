@@ -10,6 +10,7 @@ use Lightroom\Common\Logbook;
 use Lightroom\Exceptions\FileNotFound;
 use Lightroom\Exceptions\LoggerClassNotFound;
 use Lightroom\Requests\Filter;
+use function Lightroom\Requests\Functions\{session};
 use function Lightroom\Functions\GlobalVariables\{var_set, var_get};
 
 
@@ -205,4 +206,99 @@ function getUrlAsArray() : array
 
     // return array
     return is_array($url) ? $url : [];
+}
+
+/**
+ * @method GlobalFunctions alert
+ * @return class
+ */
+function alert()
+{
+    // @var array $args
+    $args = func_get_args();
+
+    if (count($args) == 0) return new class(){
+        /**
+         * @var array $alerts
+         */
+        private $alerts = [];
+
+        /**
+         * @method stdClass __construct
+         * @return mixed
+         */
+        public function __construct() { $this->alerts = session()->get('alert.data.cached'); }
+
+        /**
+         * @method stdClass get
+         * @return mixed
+         */
+        public function get(string $name)
+        { 
+            if (isset($this->alerts[$name])) :
+
+                // get data
+                $data = $this->alerts[$name];
+
+                // remove
+                unset($this->alerts[$name]);
+
+                // set session
+                session()->set('alert.data.cached', $this->alerts);
+
+                // return data
+                return $data;
+
+            endif;
+        }
+
+        /**
+         * @method stdClass has 
+         * @param string $name
+         */
+        public function has(string $name)
+        {
+            /**
+             * @var bool $confirmed
+             */
+            $confirmed = false;
+
+            // check 
+            if (isset($this->alerts[$name])) $confirmed = true;
+
+            // return bool
+            return $confirmed;
+        }
+    };
+
+    // extract data
+    $name = $args[0];
+    $body = isset($args[1]) ? $args[1] : '';
+    $option = isset($option[2]) ? $option[2] : '';
+
+    if (is_array($body)) :
+        
+        // update option and body
+        $option = $body;
+        $body = '';
+    
+    endif;
+
+    // get cached
+    $cachedData = session()->get('alert.data.cached');
+
+    // update data
+    $isArray = [] <= $cachedData;
+
+    // check
+    if (!$isArray) $cachedData = [];
+
+    // set data
+    $cachedData[$name] = ($body != '' ? $body : $option);
+
+    // cache data
+    session()->set('alert.data.cached', $cachedData);
+
+    // update option
+    if (is_array($option) && isset($option['route'])) func()->redirect($option['route']);
 }

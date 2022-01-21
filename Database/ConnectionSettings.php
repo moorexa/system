@@ -250,7 +250,7 @@ class ConnectionSettings
      *       etc..
      *    ]
      */
-    private static function settingsVars(array &$settings = [], array $configuration, string $action = 'production') : void
+    private static function settingsVars(array &$settings = [], array $configuration = [], string $action = 'production') : void
     {
         // check if action exists in configuration
         if (isset($configuration[$action])) :

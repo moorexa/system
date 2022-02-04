@@ -65,6 +65,10 @@ class Dispatcher
         // get event method
         $eventMethod = $arguments[0];
 
+        // clean up event method
+        $eventMethod = ucwords(preg_replace('/[-]/', ' ', $eventMethod));
+        $eventMethod = lcfirst(preg_replace('/[\s]+/', '', $eventMethod));
+
         // add trigger
         self::$eventsDispatched[$classAlaise . '.' . $eventMethod] = array_splice($arguments, 1);
 

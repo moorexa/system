@@ -1,6 +1,7 @@
 <?php
 namespace Lightroom\Requests\Rules;
 
+use Lightroom\Adapter\ClassManager;
 use Lightroom\Requests\Rules\Interfaces\ValidatorInterface;
 /**
  *
@@ -35,7 +36,8 @@ class Validator implements ValidatorInterface
         'file' => 'Must be a file',
         '_filetype' => 'Invalid file type. Must be of type {:contain}',
         'a_class' => 'Invalid Class name. Class does not exists',
-        'an_array' => 'Must be of type array'
+        'an_array' => 'Must be of type array',
+        'method' => 'Failed to call class method'
     ];
 
     // last method ran
@@ -72,13 +74,13 @@ class Validator implements ValidatorInterface
         return false;
     }
 
-     // an array
-     private function an_array($data)
-     {
-         if (is_array($data)) return true;
- 
-         return false;
-     }
+    // an array
+    private function an_array($data)
+    {
+        if (is_array($data)) return true;
+
+        return false;
+    }
 
     // regxp
     private function regxp(string $str, $regxp)
@@ -86,6 +88,65 @@ class Validator implements ValidatorInterface
         if (preg_match($regxp, $str)) return true;
 
         return false;
+    }
+
+    // method
+    private function method(string $value, string $classAndMethod)
+    {
+        // @Var array $classAndMethod
+        $classAndMethod = explode(',', preg_replace('/[\[|\]|\'|\s]/', '', $classAndMethod));
+
+        // @var bool $response
+        $response = false;
+
+        if (count($classAndMethod) >= 2) :
+            
+            // get class name
+            $className = $classAndMethod[0];
+
+            // get class method
+            $classMethod = $classAndMethod[1];
+
+            // class exists
+            if (class_exists($className)) :
+
+                // create instance
+                $instance = ClassManager::singleton($className);
+
+                // check if method exists
+                if (method_exists($instance, $classMethod)) :
+
+                    // call method
+                    $methodData = call_user_func([$instance, $classMethod], $value);
+
+                    // passed
+                    if ($methodData !== true) :
+
+                        // set error method body
+                        $this->errors['method'] = is_string($methodData) ? $methodData : 'Failed to call class method';
+
+                    else:
+
+                        // update response bool
+                        $response = true;
+
+                        // reset error method body
+                        $this->errors['method'] = 'Failed to call class method';
+
+                    endif;
+
+                else:
+
+                    // set method response
+                    $this->errors['method'] = 'Failed to load method \''.$classMethod.'\' from class \''.$className.'\'';
+
+                endif;
+
+            endif;
+
+        endif;
+  
+        return $response;
     }
 
     // min

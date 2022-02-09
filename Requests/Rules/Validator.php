@@ -55,6 +55,9 @@ class Validator implements ValidatorInterface
     // private type
     private $type;
 
+    // register caller
+    private $registerCaller = '';
+
     /**
      * @method ValidatorInterface loadData
      * @param mixed $data 
@@ -117,7 +120,7 @@ class Validator implements ValidatorInterface
                 if (method_exists($instance, $classMethod)) :
 
                     // call method
-                    $methodData = call_user_func([$instance, $classMethod], $value);
+                    $methodData = call_user_func([$instance, $classMethod], $value, $this->registerCaller);
 
                     // passed
                     if ($methodData !== true) :
@@ -569,6 +572,9 @@ class Validator implements ValidatorInterface
                             {
                                 // register method
                                 $this->registerMethod($meth);
+
+                                // register string
+                                $this->registerCaller = $string;
 
                                 // call method
                                 $track = $this->{$meth}($data, $other);

@@ -235,7 +235,7 @@ trait Post
         foreach ($keys as $key) :
 
             // add to picked
-            $picked[$key] = $this->get($key);
+            if ($this->has($key)) $picked[$key] = $this->get($key);
 
         endforeach;
 

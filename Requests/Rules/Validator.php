@@ -163,15 +163,15 @@ class Validator implements ValidatorInterface
     }
 
     // file
-    private function file(string $str)
+    private function file($str)
     {
-        if (isset($_FILES[$str])) return true;
+        if (is_string($str) && isset($_FILES[$str])) return true;
 
         return false;
     }
 
     // file_multiple
-    private function file_multiple(string $str)
+    private function file_multiple($str)
     {
         // check for name
         if ($this->file($str)) :

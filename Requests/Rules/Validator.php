@@ -540,17 +540,15 @@ class Validator implements ValidatorInterface
                 
                 foreach($options as $i => $option)
                 {
+                    $meth = $option;
+                    $other = null;
+
                     if (strpos($option, ':') !== false)
                     {
                         // get first position
                         $pos = strpos($option, ':');
                         $meth = substr($option, 0, $pos);
                         $other = substr($option, $pos+1);
-                    }
-                    else
-                    {
-                        $meth = $option;
-                        $other = null;
                     }
 
                     // switch method
@@ -594,7 +592,14 @@ class Validator implements ValidatorInterface
                                     $error = str_replace('{:contain}', $other, $error);
                                     $error = str_replace('{:match}', $other, $error);
 
-                                    $errors[$string][] = $error;
+                                    if ($other == 'optional')
+                                    {
+                                        $this->success[$string] = ($meth == 'file' ? [] : '');
+                                    }
+                                    else
+                                    {
+                                        $errors[$string][] = $error;
+                                    }
                                 }
                                 else
                                 {
@@ -611,7 +616,14 @@ class Validator implements ValidatorInterface
                         }
                         else
                         {
-                            $errors[$string][] = $string .' wasn\'t found. Rule ('.$meth.') didn\'t apply, validation failed';
+                            if ($other == 'optional')
+                            {
+                                $this->success[$string] = ($meth == 'file' ? [] : '');
+                            }
+                            else
+                            {
+                                $errors[$string][] = $string .' wasn\'t found. Rule ('.$meth.') didn\'t apply, validation failed';
+                            }
                         }
                         
                     }

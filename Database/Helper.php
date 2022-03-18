@@ -331,6 +331,10 @@ trait Helper
             'concat'  => function($value)
             {
                 $this->query .= $value . ' ';
+            },
+            'replace' => function ($replace, $with)
+            {
+                $this->query = str_replace($replace, $with, $this->query);
             }
             
         ];

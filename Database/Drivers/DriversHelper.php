@@ -98,7 +98,7 @@ trait DriversHelper
 
                     if (is_bool($smt)) :
 
-                        if (env('bootstrap', 'debug_mode') === true) :
+                        if (get_env('bootstrap', 'debug_mode') === true) :
                             echo 'You have an error in your database query. Please check your error.log file' . "\n";
                         endif;
 

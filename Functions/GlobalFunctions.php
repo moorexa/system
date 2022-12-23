@@ -18,7 +18,7 @@ use function Lightroom\Functions\GlobalVariables\{var_set, var_get};
 function func() { return GlobalFunctions::$instance; }
 
 // global environment getter function
-function env( string $name, string $value = '' ) { return Environment::getEnv($name, $value); }
+function get_env( string $name, string $value = '' ) { return Environment::getEnv($name, $value); }
 
 // global environment setter function
 function env_set( string $name, $value = '' ) { return Environment::setEnv($name, $value); }

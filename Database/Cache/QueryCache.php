@@ -21,7 +21,7 @@ class QueryCache
         $cached = false;
 
         // can we check
-        if (env('bootstrap', 'enable.db.caching') === true) :
+        if (get_env('bootstrap', 'enable.db.caching') === true) :
             
             // start buffer
             ob_start();

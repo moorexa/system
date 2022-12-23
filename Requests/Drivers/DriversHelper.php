@@ -69,7 +69,7 @@ trait DriversHelper
             $domain = $this->getUserDomain(func()->url('/session/storage'));
         
             // update key
-            $key = md5(hash('sha256', '/'.$type.'/' . $identifier . '/key/' . env('bootstrap', 'secret_key')) . $domain) . '_' . $identifier;
+            $key = md5(hash('sha256', '/'.$type.'/' . $identifier . '/key/' . get_env('bootstrap', 'secret_key')) . $domain) . '_' . $identifier;
 
         endif;
 

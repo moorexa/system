@@ -70,7 +70,7 @@ class Session implements DatabaseDriverInterface
         if ($connection_name == '') :
             
             // get the identifier
-            $identifier = env('session')['identifier'];
+            $identifier = get_env('session')['identifier'];
 
             // check length
             if (strlen($identifier) > 1) $connection_name = $identifier;

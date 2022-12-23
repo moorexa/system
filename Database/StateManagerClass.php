@@ -351,8 +351,8 @@ class StateManagerClass
     private static function getSessionConfig()
     {
         self::$configuration = [
-            'driver' => env('session', 'driver'),
-            'class' => env('session', 'class')
+            'driver' => get_env('session', 'driver'),
+            'class' => get_env('session', 'class')
         ];
     }
 

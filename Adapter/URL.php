@@ -54,7 +54,7 @@ trait URL
         // get url
         $pathUrl = $this->getUrl();
 
-        if (function_exists('env') && env('bootstrap', 'app.url') == '') :
+        if (function_exists('get_env') && get_env('bootstrap', 'app.url') == '') :
 
             // get scheme and host
             $url = parse_url($pathUrl);

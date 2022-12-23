@@ -74,7 +74,7 @@ class Cookie implements DatabaseDriverInterface
         if ($connection_name == '') :
             
             // get the identifier
-            $identifier = env('cookie')['identifer'];
+            $identifier = get_env('cookie')['identifer'];
 
             // check length
             if (strlen($identifier) > 1) $connection_name = $identifier;

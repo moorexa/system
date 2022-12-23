@@ -95,7 +95,7 @@ class CsrfRequestManager
                 $array = explode('/', $token);
 
                 // build token with app url
-                $builtToken = md5(func()->url($sessionId)) . 'salt:'.env('bootstrap', 'csrf_salt').'/'.$array[1].'/sessionId:'.$sessionId;
+                $builtToken = md5(func()->url($sessionId)) . 'salt:'.get_env('bootstrap', 'csrf_salt').'/'.$array[1].'/sessionId:'.$sessionId;
 
                 // update error
                 $error = 'CSRF TOKEN sent with this form has expired. Please resubmit form with the new token generated.';
@@ -143,7 +143,7 @@ class CsrfRequestManager
         $sessionId = session_id();
 
         // build token with app url
-        $token = md5(func()->url($sessionId)) . 'salt:'.env('bootstrap', 'csrf_salt').'/token:'.$token.'/sessionId:'.$sessionId;
+        $token = md5(func()->url($sessionId)) . 'salt:'.get_env('bootstrap', 'csrf_salt').'/token:'.$token.'/sessionId:'.$sessionId;
 
         // encrypt token with secret key
         return encrypt($token);

@@ -31,7 +31,7 @@ class FrameworkDefault extends Exception
         $body = $this->getErrorBody($var, $traceBack);
 
         // can debug
-        $debug = function_exists('env') ? env('bootstrap', 'debug_mode') : true;
+        $debug = function_exists('get_env') ? get_env('bootstrap', 'debug_mode') : true;
 
         // set status
         http_response_code(500);

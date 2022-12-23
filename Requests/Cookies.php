@@ -316,7 +316,7 @@ trait Cookies
      */
     private function getDriverAndDriverClass() : array 
     {
-        return [env('cookie', 'driver'), env('cookie', 'class')];
+        return [get_env('cookie', 'driver'), get_env('cookie', 'class')];
     }
 
     /**

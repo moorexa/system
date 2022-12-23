@@ -350,7 +350,7 @@ class DatabaseHandler
     public static function subscribe(string $subscriber, Closure $callback) : void 
     {
         // load blocked subscribers
-        $blockedSubscribers = env('bootstrap', 'database');
+        $blockedSubscribers = get_env('bootstrap', 'database');
 
         // @var bool $canAdd 
         $canAdd = true;
@@ -381,7 +381,7 @@ class DatabaseHandler
         $logger = logger();
 
         // debug mode
-        $debug = env('bootstrap', 'debug_mode');
+        $debug = get_env('bootstrap', 'debug_mode');
 
         // log error
         if (!\is_null($logger)) :

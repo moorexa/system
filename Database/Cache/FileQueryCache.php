@@ -136,7 +136,7 @@ trait FileQueryCache
         if ($this->allowSaveQuery) :
             
             // db caching allowed ?
-            if (env('bootstrap', 'enable.db.caching') && $this->cacheQuery) :
+            if (get_env('bootstrap', 'enable.db.caching') && $this->cacheQuery) :
             
                 // get driver source
                 $source = $this->driverSource;

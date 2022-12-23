@@ -97,7 +97,7 @@ class Driver implements DriverInterface, DriverQueryBuilder
         if ($source == '') :
 
             // check for source for this driver
-            $drivers = env('database', 'drivers');
+            $drivers = get_env('database', 'drivers');
 
             // check now
             if (is_array($drivers)) :

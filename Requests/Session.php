@@ -500,7 +500,7 @@ trait Session
      */
     private function getDriverAndDriverClass() : array 
     {
-        return [env('session', 'driver'), env('session', 'class')];
+        return [get_env('session', 'driver'), get_env('session', 'class')];
     }
 
     /**

@@ -541,7 +541,7 @@ class Validator implements ValidatorInterface
                 foreach($options as $i => $option)
                 {
                     $meth = $option;
-                    $other = null;
+                    $other = '';
 
                     if (strpos($option, ':') !== false)
                     {

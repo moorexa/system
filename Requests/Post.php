@@ -313,7 +313,7 @@ trait Post
 
             // string
             case 'string':
-                $value = get_env('bootstrap', 'filter-input') ? filter_var($value, FILTER_SANITIZE_STRING) : $value;
+                $value = get_env('bootstrap', 'filter-input') ? htmlspecialchars($value) : $value;
             break;
 
             // int

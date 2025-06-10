@@ -135,7 +135,7 @@ class FrameworkAutoloader
             $includeFile = function(string $classWithBasePath, $other = null) use (&$pathFound, &$className)
             {
                 // check if file exists, and break out of loop if yes
-                if (file_exists($classWithBasePath) || file_exists($other)) :
+                if (file_exists($classWithBasePath) || ($other !== null && file_exists($other))) :
 
                     // include file
                     include_once (file_exists($classWithBasePath) ? $classWithBasePath : $other);

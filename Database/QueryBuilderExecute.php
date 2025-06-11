@@ -60,7 +60,7 @@ trait QueryBuilderExecute
      * Execute query
      * @return PDOStatement
      */
-    public function go() : PDOStatement
+    public function go()
     {
         // return promise
         if ($this->returnPromise === true) :
@@ -200,8 +200,10 @@ trait QueryBuilderExecute
         
                             endswitch;
 
-                            // log last insert id
-                            if ($this->method == 'insert') Handler::$lastInsertId = $this->pdoInstance->lastInsertId();
+                            $lastInsertId = 0;
+
+                            if ($this->method == 'insert') $lastInsertId = $this->pdoInstance->lastInsertId();
+
 
                             // query ran
                             Handler::queryRanSuccessfully($statement, $this->method);
@@ -219,6 +221,16 @@ trait QueryBuilderExecute
 
                             // load subscribers
                             if ($this->method != 'select') Handler::loadSubscribers($statement, $this->pdoInstance);
+
+                            // log last insert id
+                            if ($this->method == 'insert') :
+
+                                return (object) [
+                                    'id'        => $lastInsertId,
+                                    'statement' => $statement,
+                                ];
+
+                            endif;
                             
                         endif;
 

@@ -13,6 +13,9 @@ trait QueryBuilderProperties
     // get database driver from database handler
     private $driver;
 
+    // allowed
+    public $allowed;
+
     // sql query
     public $query = '';
 

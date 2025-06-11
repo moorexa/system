@@ -137,7 +137,7 @@ trait Sql
 
                 $this->query = $sqlStatement;
 
-                $this->method = 'sql';
+                if (isset($this->method)) $this->method = 'sql';
 
                 return $this;
 
@@ -149,7 +149,7 @@ trait Sql
         else :
 
             // set the query method
-            $this->method = 'sql';
+            if (isset($this->method)) $this->method = 'sql';
 
             // get query and bind from hash
             $this->query = $mixedData['query'];

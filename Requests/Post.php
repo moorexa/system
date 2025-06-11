@@ -254,6 +254,18 @@ trait Post
         // @var array $post
         $post = $_POST;
 
+        if (count($post) == 0) :
+
+            $input = file_get_contents('php://input');
+            try {
+                $json = (array) json_decode($input);
+                if (count($json) > 0) $post = $json;
+            } catch(\Throwable $e) {
+                // keep quiet about it
+            }
+
+        endif;
+
         // using foreach
         foreach ($post as $key => $value) :
 

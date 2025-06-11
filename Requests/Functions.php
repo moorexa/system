@@ -153,3 +153,15 @@ function server(Closure $closure = null)
     // return wrapper
     return $server;
 }
+
+/**
+ * @method sanitizeString
+ * @param string $input
+ * @return string
+ * 
+ * This helps sanitize strings
+ */
+function sanitizeString(string $input) 
+{
+    return htmlspecialchars(strip_tags($input), ENT_QUOTES | ENT_HTML5, 'UTF-8');
+}

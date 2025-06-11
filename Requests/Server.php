@@ -2,6 +2,7 @@
 namespace Lightroom\Requests;
 
 use Lightroom\Requests\Interfaces\ServerInterface;
+use function Lightroom\Requests\Functions\{sanitizeString};
 /**
  * @package Server
  * @author Amadi Ifeanyi <amadiify.com>
@@ -117,7 +118,7 @@ trait Server
         $server = $this->all();
 
         // set key value
-        $server[$key] = is_string($value) ? filter_var($value, FILTER_SANITIZE_STRING) : $value;
+        $server[$key] = is_string($value) ? sanitizeString($value) : $value;
 
         // set global
         self::$servers = $server;
@@ -315,7 +316,7 @@ trait Server
                 $key = strtolower($key);
 
                 // save to global variable
-                self::$servers[$key] = is_string($value) ? filter_var($value, FILTER_SANITIZE_STRING) : $value;
+                self::$servers[$key] = is_string($value) ? sanitizeString($value) : $value;
 
             endforeach;
 

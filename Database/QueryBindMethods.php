@@ -634,12 +634,12 @@ trait QueryBindMethods
                 if (is_string($key)) : 
                     
                     $statement .= $key.' = :'.$this->cleanBind($key).' '.$separator.' '; 
-
+                    
                     // decode value
-                    $value = html_entity_decode($value);
+                    $value = $value ? html_entity_decode($value) : $value;
 
                     // if slashes are not allowed, then add slashes
-                    if (!$this->allowSlashes) $value = addslashes(stripslashes($value));
+                    if (!$this->allowSlashes) $value = $value ? addslashes(stripslashes($value)) : $value;
 
                     // update bind array
                     $bind[$this->cleanBind($key)] = $value;

@@ -30,8 +30,8 @@ class Validator implements ValidatorInterface
         'email' => 'Invalid email address',
         'url'  => 'Invalid URL address',
         'date' => 'Invalid Date format',
-        'array' => 'Invalid Array format',
-        'object' => 'Invalid Object format',
+        '_array' => 'Invalid Array format',
+        '_object' => 'Invalid Object format',
         'match' => 'Does not match {:match}',
         'regxp' => 'Pattern failed.',
         'required' => 'Field is required. Value must contain at least one character, number or symbol',
@@ -559,6 +559,14 @@ class Validator implements ValidatorInterface
                         case 'filetype':
                             $meth = '_filetype';
                         break;
+
+                        case 'array':
+                            $meth = '_array';
+                        break;
+
+                        case 'object':
+                            $meth = '_object';
+                        break;
                     }
 
                     if (method_exists($this, $meth) && !in_array($meth, $private))
@@ -606,6 +614,9 @@ class Validator implements ValidatorInterface
                                 else
                                 {
                                     $this->success[$string] = isset($this->data[$string]) ? $this->data[$string] : (isset($_FILES[$string]) ? $_FILES[$string] : null);
+                                    if ($meth == '_array' || $meth == '_object') {
+                                        $this->success[$string] = is_string($this->success[$string]) ? json_decode($this->success[$string]) : $this->success[$string];
+                                    }
                                 }
                             }
                             else
@@ -644,8 +655,9 @@ class Validator implements ValidatorInterface
         
     }
 
-    private function _array(string $str) {
-        $array = json_encode($str);
+    private function _array(mixed $str) {
+        if (is_array($str)) return true;
+        $array = json_decode($str);
         if (json_last_error() === JSON_ERROR_NONE) {
            if (is_array($array)) return true;
         }
@@ -653,10 +665,11 @@ class Validator implements ValidatorInterface
         return false;
     }
 
-    private function _object(string $str) {
-        $array = json_encode($str);
+    private function _object(mixed $str) {
+        if (is_object($str)) return true;
+        $object = json_decode($str);
         if (json_last_error() === JSON_ERROR_NONE) {
-           if (is_object($array)) return true;
+           if (is_object($object)) return true;
         }
         return false;
     }

@@ -571,7 +571,6 @@ class Validator implements ValidatorInterface
 
                     if (method_exists($this, $meth) && !in_array($meth, $private))
                     {
-
                         if (array_key_exists($string, $this->data) || isset($_FILES[$string]))
                         {
                             $data = array_key_exists($string, $this->data) ? $this->data[$string] : $string;
@@ -613,9 +612,15 @@ class Validator implements ValidatorInterface
                                 }
                                 else
                                 {
-                                    $this->success[$string] = isset($this->data[$string]) ? $this->data[$string] : (isset($_FILES[$string]) ? $_FILES[$string] : null);
-                                    if ($meth == '_array' || $meth == '_object') {
-                                        $this->success[$string] = is_string($this->success[$string]) ? json_decode($this->success[$string]) : $this->success[$string];
+                                    $update = true;
+
+                                    if ($meth == 'required' && isset($this->success[$string])) $update = false;
+
+                                    if ($update) {
+                                        $this->success[$string] = isset($this->data[$string]) ? $this->data[$string] : (isset($_FILES[$string]) ? $_FILES[$string] : null);
+                                        if ($meth == '_array' || $meth == '_object') {
+                                            $this->success[$string] = is_string($this->success[$string]) ? json_decode($this->success[$string]) : $this->success[$string];
+                                        }
                                     }
                                 }
                             }
@@ -646,7 +651,7 @@ class Validator implements ValidatorInterface
             if (count($errors) > 0) return false;
 
             //return post data
-            $post = $this->success; 
+            $post = $this->success;
 
             return true;
         }

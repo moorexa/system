@@ -30,6 +30,8 @@ class Validator implements ValidatorInterface
         'email' => 'Invalid email address',
         'url'  => 'Invalid URL address',
         'date' => 'Invalid Date format',
+        'array' => 'Invalid Array format',
+        'object' => 'Invalid Object format',
         'match' => 'Does not match {:match}',
         'regxp' => 'Pattern failed.',
         'required' => 'Field is required. Value must contain at least one character, number or symbol',
@@ -642,6 +644,23 @@ class Validator implements ValidatorInterface
         
     }
 
+    private function _array(string $str) {
+        $array = json_encode($str);
+        if (json_last_error() === JSON_ERROR_NONE) {
+           if (is_array($array)) return true;
+        }
+
+        return false;
+    }
+
+    private function _object(string $str) {
+        $array = json_encode($str);
+        if (json_last_error() === JSON_ERROR_NONE) {
+           if (is_object($array)) return true;
+        }
+        return false;
+    }
+
     /**
      * @method Validator __call
      * @param string $method
@@ -656,6 +675,14 @@ class Validator implements ValidatorInterface
         elseif ($method == 'filetype') :
         
             return call_user_func_array([$this, '_filetype'], $arguments);
+
+        elseif ($method == 'array') :
+        
+            return call_user_func_array([$this, '_array'], $arguments);
+
+        elseif ($method == 'object') :
+        
+            return call_user_func_array([$this, '_object'], $arguments);
 
         endif;
 
